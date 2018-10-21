@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from collections import deque
 from random import random
-from sys import argv
+from sys import argv, stdin, stdout
 
 class Trivium:
 	def __init__(self, key, iv=None):
@@ -79,10 +79,10 @@ def main():
 
 	KEY = argv[1]
 	IV = argv[2]
-	MESSAGE = argv[3] if len(argv) == 4 else input()
+	MESSAGE = argv[3] if len(argv) == 4 else stdin.read()
 	CIPHER = Trivium(KEY, IV).process(MESSAGE)
 
-	print(CIPHER)
+	stdout.write(CIPHER)
 
 if __name__ == "__main__":
 	main()
