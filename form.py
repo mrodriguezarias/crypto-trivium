@@ -8,6 +8,7 @@ class Form(tk.Frame):
         super().__init__(master)
         self.elements = [
             {"name": "key", "label": "Clave de cifrado", "component": tk.Entry(self)},
+            {"name": "iv", "label": "Valor inicial", "component": tk.Entry(self)},
             {"name": "input-file", "label": "Archivo de entrada", "component": FilePicker(self)},
             {"name": "output-file", "label": "Archivo de salida", "component": FilePicker(self, save=True)},
             {"name": "output-bits", "label": "Bits de salida", "component": tk.Entry(self)},
@@ -35,7 +36,7 @@ class Form(tk.Frame):
             (lambda: e["key"].strip(), "La clave no puede quedar vacía"),
             (lambda: e["output-file"].strip(), "El archivo de salida no puede quedar vacío"),
             (lambda: not e["input-file"].strip() or isfile(e["input-file"]), "El archivo de entrada no existe o no puede leerse"),
-            (lambda: isdir(dirname(e["output-file"])), "El archivo de salida no puede ser creado en esa ruta"),
+            (lambda: not dirname(e["output-file"]) or isdir(dirname(e["output-file"])), "El archivo de salida no puede ser creado en esa ruta"),
             (lambda: not e["output-bits"].strip() or e["output-bits"].isnumeric() and int(e["output-bits"]) > 0, "El valor para bits de salida debe ser un número entero positivo"),
         ]
 
@@ -48,5 +49,5 @@ class Form(tk.Frame):
 
     def submit(self):
         e = self.get()
-        self._validate(e)
+        if not self._validate(e): return None
         return e

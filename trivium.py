@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from collections import deque
 from random import random
 from sys import argv, stdin, stdout
@@ -6,7 +5,7 @@ from sys import argv, stdin, stdout
 class Trivium:
 	def __init__(self, key, iv=None):
 		self.key = self._pad_to_80(self._to_bits(key))
-		self.iv = self._pad_to_80(self._to_bits(iv)) if iv else self._gen_rand_iv()
+		self.iv = self._pad_to_80(self._to_bits(iv)) if iv is not None else self._gen_rand_iv()
 		self.state = self._initial_state()
 		self.counter = 0
 		self._warm_up_phase()
@@ -51,8 +50,10 @@ class Trivium:
 
 		return z_i
 
-	def process(self, message):
-		return self._from_bits([b ^ next(self.keystream()) for b in self._to_bits(message)])
+	def process(self, message, nbits=None):
+		bits = self._to_bits(message)
+		nbits = nbits if nbits else len(bits)
+		return self._from_bits([bits[i] ^ next(self.keystream()) for i in range(nbits)])
 
 	def _pad_to_80(self, bits):
 		return bits[:80] + [0] * (80 - len(bits))
@@ -71,18 +72,3 @@ class Trivium:
 			byte = bits[b*8:(b+1)*8]
 			chars.append(chr(int(''.join([str(bit) for bit in byte]), 2)))
 		return ''.join(chars)
-
-def main():
-	if len(argv) not in (3, 4):
-		print("Use: trivium.py <key> <IV> <message to encrypt/decrypt>")
-		return
-
-	KEY = argv[1]
-	IV = argv[2]
-	MESSAGE = argv[3] if len(argv) == 4 else stdin.read()
-	CIPHER = Trivium(KEY, IV).process(MESSAGE)
-
-	stdout.write(CIPHER)
-
-if __name__ == "__main__":
-	main()
