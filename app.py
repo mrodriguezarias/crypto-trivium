@@ -22,7 +22,8 @@ class Application(tk.Frame):
         self.footer = tk.Frame(bd=1, relief=tk.SUNKEN)
 
         self.runbtn = tk.Button(self.footer, text="Ejecutar", state=tk.ACTIVE, command=self.run_event_handler, takefocus=0)
-        self.master.bind("<KeyPress-Return>", self.run_event_handler)
+        self.master.bind("<Return>", self.run_event_handler)
+        self.master.bind("<KP_Enter>", self.run_event_handler)
         self.runbtn.pack(side="right", padx=10, pady=10)
 
         self.aboutbtn = tk.Button(self.footer, text="Acerca de", command=self.about_event_handler, takefocus=0)

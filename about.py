@@ -7,7 +7,7 @@ class AboutDialog(object):
         self.parent = parent
 
         root.title("Acerca de")
-        self.size(240, 180)
+        self.size(230, 190)
         root.after(10, lambda: root.grab_set_global())
 
         frm_1 = tk.Frame(root)
@@ -30,8 +30,9 @@ Rodríguez Arias, Mariano"""
         btn = tk.Button(frm_2, width=3, text="OK", command=self.quit_action)
         btn.pack(side=tk.LEFT, padx=10)
 
-        btn.bind("<KeyPress-Return>", func=self.quit_action)
-        btn.bind("<KeyPress-Escape>", func=self.quit_action)
+        btn.bind("<Return>", func=self.quit_action)
+        btn.bind("<KP_Enter>", func=self.quit_action)
+        btn.bind("<Escape>", func=self.quit_action)
         btn.focus_set()
 
         root.protocol("WM_DELETE_WINDOW", self.quit_action)
