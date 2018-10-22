@@ -53,6 +53,10 @@ class Application(tk.Frame):
         else:
             self.master.focus_force()
 
-root = tk.Tk()
-app = Application(root)
-app.mainloop()
+def main():
+    root = tk.Tk()
+    app = Application(root)
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()
