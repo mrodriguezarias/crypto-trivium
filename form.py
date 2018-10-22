@@ -1,5 +1,7 @@
 import tkinter as tk
 from filepicker import FilePicker
+from tkinter.messagebox import showwarning
+from os.path import isfile, dirname, isdir
 
 class Form(tk.Frame):
     def __init__(self, master=None):
@@ -10,9 +12,9 @@ class Form(tk.Frame):
             {"name": "output-file", "label": "Archivo de salida", "component": FilePicker(self, save=True)},
             {"name": "output-bits", "label": "Bits de salida", "component": tk.Entry(self)},
         ]
-        self.create_interface()
+        self._create_interface()
 
-    def create_interface(self):
+    def _create_interface(self):
         self.grid_columnconfigure(1, weight=1)
         self.grid(pady=5)
 
@@ -21,3 +23,30 @@ class Form(tk.Frame):
             e["component"].grid(row=i+1, column=1, sticky=tk.W+tk.E, padx=(2.5,10), pady=5)
 
         self.elements[0]["component"].focus()
+
+    def get(self):
+        return {e["name"]: e["component"].get() for e in self.elements}
+
+    def _warn(self, msg):
+        showwarning("Alerta", msg)
+
+    def _validate(self, e):
+        validations = [
+            (lambda: e["key"].strip(), "La clave no puede quedar vacía"),
+            (lambda: e["output-file"].strip(), "El archivo de salida no puede quedar vacío"),
+            (lambda: not e["input-file"].strip() or isfile(e["input-file"]), "El archivo de entrada no existe o no puede leerse"),
+            (lambda: isdir(dirname(e["output-file"])), "El archivo de salida no puede ser creado en esa ruta"),
+            (lambda: not e["output-bits"].strip() or e["output-bits"].isnumeric() and int(e["output-bits"]) > 0, "El valor para bits de salida debe ser un número entero positivo"),
+        ]
+
+        for assertion, error in validations:
+            if not assertion():
+                showwarning("Alerta", error + ".")
+                return False
+
+        return True
+
+    def submit(self):
+        e = self.get()
+        self._validate(e)
+        return e

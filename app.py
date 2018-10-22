@@ -15,8 +15,12 @@ class Application(tk.Frame):
         self.create_interface()
 
     def create_interface(self):
-        Form(self.master).pack(fill=tk.BOTH, expand=True, pady=10)
+        self.create_form()
         self.create_footer()
+
+    def create_form(self):
+        self.form = Form(self.master)
+        self.form.pack(fill=tk.BOTH, expand=True, pady=10)
 
     def create_footer(self):
         self.footer = tk.Frame(bd=1, relief=tk.SUNKEN)
@@ -32,7 +36,7 @@ class Application(tk.Frame):
         self.footer.pack(side="bottom", fill="x", expand=False)
 
     def run_event_handler(self, event=None):
-        pass
+        self.form.submit()
 
     def about_event_handler(self, event=None):
         AboutDialog(self.master)
