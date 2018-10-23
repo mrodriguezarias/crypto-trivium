@@ -3,7 +3,8 @@ from random import random
 from sys import argv, stdin, stdout
 
 class Trivium:
-	def __init__(self, key, iv=None):
+	def __init__(self, key, iv=None, bm=False):
+		self.bm = bm # binary mode
 		self.key = self._pad_to_80(self._to_bits(key))
 		self.iv = self._pad_to_80(self._to_bits(iv)) if iv is not None else self._gen_rand_iv()
 		self.state = self._initial_state()
@@ -61,14 +62,15 @@ class Trivium:
 	def _to_bits(self, str):
 		result = []
 		for c in str:
-			bits = bin(ord(c))[2:]
+			bits = bin(int(c) if self.bm else ord(c))[2:]
 			bits = '00000000'[len(bits):] + bits
 			result.extend([int(b) for b in bits])
 		return result
 
 	def _from_bits(self, bits):
 		chars = []
-		for b in range(len(bits) // 8):
-			byte = bits[b*8:(b+1)*8]
-			chars.append(chr(int(''.join([str(bit) for bit in byte]), 2)))
-		return ''.join(chars)
+		for i in range(len(bits) // 8):
+			byte = bits[i*8:(i+1)*8]
+			b = int(''.join([str(bit) for bit in byte]), 2)
+			chars.append(int(chr(b)) if self.bm else chr(b))
+		return b''.join(bytes(chars)) if self.bm else ''.join(bytes(chars))

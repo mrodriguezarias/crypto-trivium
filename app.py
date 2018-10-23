@@ -44,10 +44,11 @@ class Application(tk.Frame):
         if not e: return
 
         bits = int(e["output-bits"]) if e["output-bits"] else 0
-        message = Path(e["input-file"]).read_text()
-        trivium = Trivium(e["key"], e["iv"])
+        message = Path(e["input-file"]).read_bytes()
+
+        trivium = Trivium(e["key"], e["iv"], True)
         cipher = trivium.process(message, bits)
-        written = Path(e["output-file"]).write_text(cipher)
+        written = Path(e["output-file"]).write_bytes(cipher)
 
         if not bits and len(message) != len(cipher) or bits and ceil(bits / 8) != len(cipher):
             showwarning("Alerta", "Ocurrió un problema al procesar el archivo de entrada.")
