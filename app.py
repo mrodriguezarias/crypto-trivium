@@ -6,7 +6,7 @@ from form import Form
 from about import AboutDialog
 from trivium import Trivium
 from pathlib import Path
-from tkinter.messagebox import showwarning, showinfo
+from tkinter.messagebox import showerror, showinfo
 from math import ceil
 
 class Application(tk.Frame):
@@ -50,13 +50,12 @@ class Application(tk.Frame):
         cipher = trivium.process(message, bits)
         written = Path(e["output-file"]).write_bytes(cipher)
 
-        if message is not None and (not bits and len(message) != len(cipher) or bits and ceil(bits / 8) != len(cipher)):
-            showwarning("Alerta", "Ocurrió un problema al procesar el archivo de entrada.")
+        if not bits and message is not None and len(message) != len(cipher) or bits and ceil(bits / 8) != len(cipher):
+            showerror("Error", "Ocurrió un problema al procesar el archivo de entrada.")
         elif written != len(cipher):
-            showwarning("Alerta", "Ocurrió un problema al intentar escribir el archivo de salida.")
+            showerror("Error", "Ocurrió un problema al intentar escribir el archivo de salida.")
         else:
             showinfo("Éxito", "El archivo se procesó correctamente.")
-
 
     def about_event_handler(self, event=None):
         AboutDialog(self.master)

@@ -1,10 +1,11 @@
 from collections import deque
 from random import random
+from math import ceil, log2
 
 class Trivium:
     def __init__(self, key, iv=None):
-        self.key = self._pad_to_80(self._to_bits(key))
-        self.iv = self._pad_to_80(self._to_bits(iv)) if iv is not None else self._gen_rand_iv()
+        self.key = self._fix_bits_to_len(self._to_bits(key))
+        self.iv = self._fix_bits_to_len(self._to_bits(iv)) if iv is not None else self._gen_rand_iv()
         self.state = self._initial_state()
         self.counter = 0
         self._warm_up_phase()
@@ -53,10 +54,12 @@ class Trivium:
         if message is not None:
             bits = self._to_bits(message)
             nbits = nbits if nbits else len(bits)
-        return self._from_bits([(bits[i] if message else 0) ^ next(self.keystream()) for i in range(nbits)])
+        cipher = [(bits[i] if message else 0) ^ next(self.keystream()) for i in range(nbits)]
+        return self._from_bits(self._fix_bits_to_len(cipher, 2 ** ceil(log2(nbits)), True))
 
-    def _pad_to_80(self, bits):
-        return bits[:80] + [0] * (80 - len(bits))
+    def _fix_bits_to_len(self, bits, length=80, left=False):
+        zeroes = [0] * (length - len(bits))
+        return zeroes + bits[max(0, len(bits) - length):] if left else bits[:length] + zeroes
 
     def _to_bits(self, bytes):
         bytes = str.encode("utf-8") if isinstance(bytes, str) else bytes
