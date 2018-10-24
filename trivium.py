@@ -1,6 +1,5 @@
 from collections import deque
 from random import random
-from math import ceil, log2
 
 class Trivium:
     def __init__(self, key, iv=None):
