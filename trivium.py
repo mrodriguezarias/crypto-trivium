@@ -54,8 +54,9 @@ class Trivium:
         if message is not None:
             bits = self._to_bits(message)
             nbits = nbits if nbits else len(bits)
+
         cipher = [(bits[i] if message else 0) ^ next(self.keystream()) for i in range(nbits)]
-        return self._from_bits(self._fix_bits_to_len(cipher, 2 ** ceil(log2(nbits)), True))
+        return self._from_bits(self._fix_bits_to_len(cipher, nbits+7 - (nbits+7)%8, True))
 
     def _fix_bits_to_len(self, bits, length=80, left=False):
         zeroes = [0] * (length - len(bits))
