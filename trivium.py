@@ -62,7 +62,7 @@ class Trivium:
         return zeroes + bits[max(0, len(bits) - length):] if left else bits[:length] + zeroes
 
     def _to_bits(self, bytes):
-        bytes = str.encode("utf-8") if isinstance(bytes, str) else bytes
+        bytes = bytes.encode("utf-8") if isinstance(bytes, str) else bytes
         result = []
         for c in bytes:
             bits = bin(c)[2:]
