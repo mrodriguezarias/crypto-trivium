@@ -8,6 +8,7 @@ from trivium import Trivium
 from pathlib import Path
 from tkinter.messagebox import showerror, showinfo
 from math import ceil
+from bmproc import BMProc
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -46,10 +47,17 @@ class Application(tk.Frame):
         bits = int(e["output-bits"]) if e["output-bits"] else 0
         message = Path(e["input-file"]).read_bytes() if e["input-file"].strip() else None
 
+        if message and BMProc.is_bmp(e["input-file"]):
+            header, message = BMProc.extract_header(message)
+
         trivium = Trivium(e["key"], e["iv"])
         cipher = trivium.process(message, bits)
-        written = Path(e["output-file"]).write_bytes(cipher)
 
+        if header:
+            message = header + message
+            cipher = header + cipher
+
+        written = Path(e["output-file"]).write_bytes(cipher)
         if not bits and message is not None and len(message) != len(cipher) or bits and ceil(bits / 8) != len(cipher):
             showerror("Error", "Ocurrió un problema al procesar el archivo de entrada.")
         elif written != len(cipher):
