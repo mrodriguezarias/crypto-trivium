@@ -45,14 +45,14 @@ class Application(tk.Frame):
         if not e: return
 
         bits = int(e["output-bits"]) if e["output-bits"] else 0
-        message = Path(e["input-file"]).read_bytes() if e["input-file"].strip() else None
-
+        header, message = None, Path(e["input-file"]).read_bytes() if e["input-file"].strip() else None
         if message and BMProc.is_bmp(e["input-file"]):
             header, message = BMProc.extract_header(message)
 
         trivium = Trivium(e["key"], e["iv"])
+        if bits and bits > len(message) * 8:
+            bits = None
         cipher = trivium.process(message, bits)
-
         if header:
             message = header + message
             cipher = header + cipher
