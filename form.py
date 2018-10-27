@@ -37,6 +37,7 @@ class Form(tk.Frame):
             (lambda: e["output-file"].strip(), "El archivo de salida no puede quedar vacío"),
             (lambda: not e["input-file"].strip() or isfile(e["input-file"]), "El archivo de entrada no existe o no puede leerse"),
             (lambda: not dirname(e["output-file"]) or isdir(dirname(e["output-file"])), "El archivo de salida no puede ser creado en esa ruta"),
+            (lambda: e["input-file"].strip() or not e["input-file"].strip() and e["output-bits"].strip(), "Los bits de salida no pueden quedar vacíos cuando no se especifica un archivo de entrada"),
             (lambda: not e["output-bits"].strip() or e["output-bits"].isnumeric() and int(e["output-bits"]) > 0, "El valor para bits de salida debe ser un número entero positivo"),
         ]
 

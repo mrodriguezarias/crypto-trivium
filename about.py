@@ -46,5 +46,5 @@ Rodríguez Arias, Mariano"""
 
     def position(self, width, height):
         x = self.parent.winfo_x() + (self.parent.winfo_width() - width) // 2
-        y = self.parent.winfo_y() + (self.parent.winfo_height() - height) // 2 - 20
+        y = self.parent.winfo_y() + (self.parent.winfo_height() - height) // 2
         self.root.geometry("{}x{}+{}+{}".format(width, height, x, y))

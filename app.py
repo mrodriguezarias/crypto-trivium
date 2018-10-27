@@ -50,7 +50,7 @@ class Application(tk.Frame):
             header, message = BMProc.extract_header(message)
 
         trivium = Trivium(e["key"], e["iv"])
-        if bits and bits > len(message) * 8:
+        if message and bits and bits > len(message) * 8:
             bits = None
         cipher = trivium.process(message, bits)
         if header:
