@@ -2,14 +2,34 @@ from collections import deque
 from random import random
 
 class Trivium:
+    randomIv = []
+
     def __init__(self, key, iv=None):
         self.key = self._fix_bits_to_len(self._to_bits(key))
-        self.iv = self._fix_bits_to_len(self._to_bits(iv)) if iv is not None else self._gen_rand_iv()
+
+        if not iv:
+            if Trivium.randomIv == []:
+                Trivium.randomIv = self._gen_rand_iv()
+                self.iv = Trivium.randomIv
+            else:
+                print("Using already generated random IV because it was empty again!!")
+                self.iv = Trivium.randomIv
+        else:
+            self.iv = self._fix_bits_to_len(self._to_bits(iv))
+
+        print("Key Used:")
+        print(self.key)
+
+        print("IV Used:")
+        print(self.iv)
+        print("")
+
         self.state = self._initial_state()
         self.counter = 0
         self._warm_up_phase()
 
     def _gen_rand_iv(self):
+        print("Using random IV because it was empty!!")
         return [int(round(random())) for _ in range(80)]
 
     def _initial_state(self):
