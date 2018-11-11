@@ -70,3 +70,8 @@ local.properties
  
 # PDT-specific
 .buildpath
+
+# Add pyinstaller entries
+app.spec
+dist/
+
